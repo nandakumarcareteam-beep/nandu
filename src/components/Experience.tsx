@@ -1,6 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const timelineEntries = [
   {
@@ -32,8 +34,24 @@ const timelineEntries = [
 export default function Experience() {
   const horizontalRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     const pin = gsap.to(horizontalRef.current, {
       x: () => {
         if (!horizontalRef.current) return 0;
@@ -54,7 +72,51 @@ export default function Experience() {
     return () => {
       pin.kill();
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <section id="experience" className="py-24 border-t border-white/5 bg-[#050912]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-24 max-w-7xl">
+          <div className="mb-16 pb-8 border-b border-white/5">
+            <span className="font-mono text-[10px] text-primary uppercase tracking-[0.35em] block mb-3">
+              Trajectory // Career Pathway
+            </span>
+            <h2 className="text-4xl font-display font-black uppercase tracking-tighter leading-none">
+              Professional Journey
+            </h2>
+          </div>
+
+          <div className="relative border-l border-white/10 pl-6 space-y-12 ml-2">
+            {timelineEntries.map((entry, index) => (
+              <div key={index} className="relative group">
+                {/* Timeline node dot */}
+                <div className="absolute -left-[35px] top-1.5 w-6 h-6 rounded-full bg-primary/15 border border-primary/45 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                  <div className="w-1.5 h-1.5 bg-[#050912] rounded-full" />
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[14px] text-primary font-bold tracking-widest">{entry.year}</span>
+                    <span className="h-3 w-[1px] bg-white/20" />
+                    <span className="font-mono text-white/40 text-[10px] uppercase tracking-wider">{entry.role}</span>
+                  </div>
+                  
+                  <h3 className="text-2xl sm:text-3xl font-display font-black uppercase text-white mt-2 leading-tight">
+                    {entry.company}
+                  </h3>
+                  
+                  <p className="text-sm sm:text-base font-sans font-light text-white/50 leading-relaxed max-w-xl">
+                    {entry.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={triggerRef} className="overflow-hidden border-t border-white/5 bg-[#050912]">

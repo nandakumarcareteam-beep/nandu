@@ -35,7 +35,7 @@ const lighthouseMetrics = [
 export default function Skills() {
   return (
     <section id="skills" className="py-24 relative border-t border-white/5 bg-[#050912]">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-24 max-w-7xl">
         
         {/* Title Block with Wibify minimalist layout */}
         <div className="mb-20 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 pb-12 border-b border-white/5">

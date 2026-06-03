@@ -14,8 +14,12 @@ export default function Hero() {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = canvas.width = canvas.offsetWidth;
-    let height = canvas.height = canvas.offsetHeight;
+    const dpr = window.devicePixelRatio || 1;
+    let width = canvas.offsetWidth;
+    let height = canvas.offsetHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
 
     const particles: Array<{
       x: number;
@@ -78,8 +82,12 @@ export default function Hero() {
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = canvas.offsetWidth;
-      height = canvas.height = canvas.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
     };
 
     const resizeObserver = new ResizeObserver(() => handleResize());
@@ -230,7 +238,7 @@ export default function Hero() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto px-6 z-10 flex flex-col items-center justify-center"
+        className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-24 max-w-7xl z-10 flex flex-col items-center justify-center"
       >
         {/* Brand visual headline with Wibify font style pairings */}
         <div className="max-w-4xl text-center mb-8">

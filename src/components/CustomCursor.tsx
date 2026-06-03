@@ -1,11 +1,29 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const [isPointer, setIsPointer] = useState(false);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(pointer: fine) and (min-width: 1024px)");
+    setIsPointer(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => {
+      setIsPointer(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handler);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isPointer) return;
+
     const cursor = cursorRef.current;
     const glow = glowRef.current;
     if (!cursor || !glow) return;
@@ -27,7 +45,9 @@ export default function CustomCursor() {
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
     };
-  }, []);
+  }, [isPointer]);
+
+  if (!isPointer) return null;
 
   return (
     <>

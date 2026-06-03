@@ -27,26 +27,27 @@ function Background() {
       <div className="mesh-gradient" />
       <div className="cyber-grid" />
       
-      {/* Liquid Blobs */}
+      {/* Liquid Blobs (with optimized hardware-accelerated radial gradients avoiding blur filters) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[
-          { left: "10%", top: "15%", size: "500px" },
-          { left: "70%", top: "25%", size: "600px" },
-          { left: "20%", top: "60%", size: "700px" },
-          { left: "60%", top: "75%", size: "550px" }
+          { left: "10%", top: "15%", size: "500px", color: "rgba(0, 245, 255, 0.06)" },
+          { left: "70%", top: "25%", size: "600px", color: "rgba(99, 102, 241, 0.05)" },
+          { left: "20%", top: "60%", size: "700px", color: "rgba(0, 245, 255, 0.04)" },
+          { left: "60%", top: "75%", size: "550px", color: "rgba(99, 102, 241, 0.05)" }
         ].map((blob, i) => (
           <motion.div
             key={i}
-            className="absolute bg-blue-500/5 rounded-full blur-[130px]"
+            className="absolute rounded-full will-change-transform transform-gpu"
             style={{
               width: blob.size,
               height: blob.size,
               left: blob.left,
               top: blob.top,
+              background: `radial-gradient(circle, ${blob.color} 0%, rgba(0,0,0,0) 70%)`
             }}
             animate={{ 
-              opacity: [0.04, 0.09, 0.04],
-              scale: [1, 1.05, 1],
+              opacity: [0.8, 1.1, 0.8],
+              scale: [1, 1.04, 1],
             }}
             transition={{ 
               duration: 15 + i * 5, 
@@ -66,17 +67,17 @@ function Navbar() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.15, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 flex justify-center p-8 pointer-events-none"
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 sm:p-8 pointer-events-none"
     >
-      <div className="glass px-10 py-4 rounded-full flex items-center gap-10 pointer-events-auto">
-        <a href="#" className="font-mono-ui !opacity-100 text-[11px] hover:text-primary transition-colors uppercase tracking-widest">Nandakumar KT</a>
-        <div className="h-4 w-[1px] bg-white/10" />
-        <div className="flex gap-8">
+      <div className="glass px-4 sm:px-10 py-3 sm:py-4 rounded-full flex items-center gap-4 sm:gap-10 pointer-events-auto max-w-[95%] sm:max-w-none">
+        <a href="#" className="font-mono-ui !opacity-100 text-[10px] sm:text-[11px] hover:text-primary transition-colors uppercase tracking-widest whitespace-nowrap">Nandakumar KT</a>
+        <div className="h-4 w-[1px] bg-white/10 shrink-0" />
+        <div className="flex gap-4 sm:gap-8">
           {["Story", "Systems", "Connect"].map((item) => (
             <a 
               key={item}
               href={`#${item.toLowerCase()}`} 
-              className="text-[11px] font-mono-ui uppercase tracking-[0.2em] hover:text-primary transition-colors"
+              className="text-[10px] sm:text-[11px] font-mono-ui uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:text-primary transition-colors"
             >
               {item}
             </a>
@@ -100,10 +101,9 @@ export default function App() {
     if (loading) return;
 
     const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      touchMultiplier: 1.8,
+      lerp: 0.08,
       infinite: false,
+      syncTouch: true,
     });
 
     // Update ScrollTrigger on scroll
@@ -126,7 +126,7 @@ export default function App() {
         if (dest) {
           lenis.scrollTo(dest as HTMLElement, {
             offset: -80,
-            duration: 1.5,
+            duration: 1.1,
             immediate: false,
           });
         }

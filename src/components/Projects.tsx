@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, CheckCircle2, Cpu, FileJson, Layers, MessageSquare, ChevronLeft, ChevronRight, Monitor, UploadCloud, Activity, Check, Loader2, Play, FileText, Lock, Shield, Eye, Database, Terminal } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -152,7 +152,18 @@ const projects = [
 
 function ProjectRow({ project, index }: { project: any; index: number; key?: string }) {
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const [showSpecs, setShowSpecs] = useState(false);
   const hasScreenshots = !!project.screenshots;
+
+  // Immersive automated pipeline processing transition overlay
+  useEffect(() => {
+    if (project.id === "radai" && activeScreenIndex === 2) {
+      const timer = setTimeout(() => {
+        setActiveScreenIndex(3);
+      }, 3200);
+      return () => clearTimeout(timer);
+    }
+  }, [activeScreenIndex, project.id]);
 
   const nextScreenshot = (screenshots: any[]) => {
     setActiveScreenIndex((prev) => (prev + 1) % screenshots.length);
@@ -224,7 +235,7 @@ function ProjectRow({ project, index }: { project: any; index: number; key?: str
                     {project.screenshots[activeScreenIndex].customOverlay === "pacs_dashboard" && (
                       <div className="absolute inset-0 z-10 flex text-sans text-white select-none pointer-events-none text-left">
                         {/* Clinical Console Sidebar */}
-                        <div className="hidden sm:flex flex-col justify-between w-48 bg-[#090e17]/95 border-r border-white/10 p-3 h-full font-sans">
+                        <div className="hidden lg:flex flex-col justify-between w-48 bg-[#090e17]/95 border-r border-white/10 p-3 h-full font-sans">
                           <div>
                             <div className="flex items-center gap-1.5 text-xs font-black text-primary uppercase tracking-tight mb-5">
                               <Activity className="w-3.5 h-3.5 text-primary" />
@@ -271,7 +282,7 @@ function ProjectRow({ project, index }: { project: any; index: number; key?: str
                           </div>
 
                           {/* Right Evaluation Templates Sidebar */}
-                          <div className="w-full md:w-56 p-4 flex flex-col justify-start bg-[#090e17]/40">
+                          <div className="hidden md:flex w-56 p-4 flex flex-col justify-start bg-[#090e17]/40">
                             <div className="flex items-center gap-1 text-[9px] font-mono tracking-widest uppercase text-white/40 mb-3.5 pb-1 border-b border-white/5">
                               <Terminal className="w-3 h-3 text-primary" /> Evaluation Templates
                             </div>
@@ -417,7 +428,7 @@ function ProjectRow({ project, index }: { project: any; index: number; key?: str
                         </div>
 
                         {/* Structured Clinic Drawer (Right segment) */}
-                        <div className="w-64 sm:w-80 bg-slate-950/95 border-l border-white/15 h-full p-4 flex flex-col justify-start relative text-sans overflow-hidden">
+                        <div className="hidden lg:flex w-64 sm:w-80 bg-slate-950/95 border-l border-white/15 h-full p-4 flex flex-col justify-start relative text-sans overflow-hidden">
                           <div className="flex justify-between items-center pb-2 border-b border-white/5">
                             <div>
                               <span className="text-[8px] font-mono tracking-widest uppercase text-white/35">Diagnostic Case Report</span>
@@ -754,17 +765,110 @@ function ProjectRow({ project, index }: { project: any; index: number; key?: str
             </div>
           </div>
 
-          <div className="flex gap-6">
-            <Button className="h-16 px-10 rounded-xl primary-gradient tactile-button">View Module Details</Button>
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
+            <Button 
+              onClick={() => setShowSpecs(!showSpecs)}
+              className={`h-14 sm:h-16 px-6 sm:px-10 rounded-xl font-semibold font-mono text-xs uppercase tracking-wider transition-all duration-300 relative overflow-hidden group w-full sm:w-auto ${
+                showSpecs 
+                  ? "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30" 
+                  : "primary-gradient text-black hover:opacity-95 tactile-button"
+              }`}
+            >
+              {showSpecs ? "Hide Model Dossier" : "View Technical Specs"}
+            </Button>
             <a 
               href={project.liveUrl} 
               target={project.liveUrl !== "#" ? "_blank" : undefined} 
               rel="noopener noreferrer"
-              className={`${buttonVariants({ variant: "outline" })} h-16 px-10 rounded-xl glass tactile-button inline-flex items-center justify-center`}
+              className={`${buttonVariants({ variant: "outline" })} h-14 sm:h-16 px-6 sm:px-10 rounded-xl glass tactile-button inline-flex items-center justify-center w-full sm:w-auto`}
             >
               Live Environment
             </a>
           </div>
+
+          <AnimatePresence>
+            {showSpecs && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full overflow-hidden"
+              >
+                <div className="glass p-6 md:p-8 rounded-2xl border-white/10 bg-black/45 space-y-6 text-sans text-left">
+                  <div className="flex justify-between items-center pb-3 border-b border-white/5">
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-primary font-bold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
+                      SPEC TELEMETRY // AI MODEL OVERVIEW
+                    </span>
+                    <span className="font-mono text-[8px] text-white/30 uppercase">ID: {project.id.toUpperCase()}-DNL-v2.8</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs font-sans">
+                    <div className="space-y-1.5 pb-2 border-b sm:border-b-0 sm:border-r border-white/5 pr-4">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">01 // Neural Network Architecture</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "Fine-Tuned BioBERT + Claude-3.5 context-aware clinical semantic mapping transformer." 
+                          : "Convolutional YOLOv8-Medical localization + 3D UNet volumetric segmentation nodes."
+                        }
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pb-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">02 // Sensitivity & Recall Metrics</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "94.2% semantic congruence score across public RLHF trial groups." 
+                          : "98.4% localization recall on thoracic compression fractures, 92.1% border specificity."
+                        }
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pb-2 border-b sm:border-b-0 sm:border-r border-white/5 pr-4 pt-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">03 // Processing Latency Telemetry</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "<180ms total text simplification and token mapping latency." 
+                          : "<350ms per sagittal spine volume sequence (approx. 40 target image frames)."
+                        }
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pb-2 pt-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">04 // HIPAA Security Safeguards</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "HIPAA compliant zero-retention API gateways, local cryptographic PII scrubbing." 
+                          : "PACS/DICOM standard aligned. Safe isolated buffer sandbox prevents telemetry leaks."
+                        }
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 sm:border-r border-white/5 pr-4 pt-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">05 // Model File Size Weights</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "7.2 Billion passive parameters optimized into quantized 8-bit sparse tensors." 
+                          : "42.6 Million active weights deployed via local WebGL accelerated pipeline."
+                        }
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pt-2">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40 block">06 // Container Grid Orchestration</span>
+                      <p className="text-white/80 font-medium leading-relaxed">
+                        {project.id === "medexplain" 
+                          ? "Served on persistent serverless GPU nodes with automatic cold-start pre-warmers." 
+                          : "Direct-to-GPU client shader execution with failback remote node replication."
+                        }
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </div>
@@ -774,7 +878,7 @@ function ProjectRow({ project, index }: { project: any; index: number; key?: str
 export default function Projects() {
   return (
     <section id="projects" className="py-24 relative border-t border-white/5 bg-[#050912]">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-24 max-w-7xl">
         
         {/* Title Block with Wibify minimalist layout */}
         <div className="mb-20 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 pb-12 border-b border-white/5">

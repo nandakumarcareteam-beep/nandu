@@ -37,6 +37,17 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     };
   }, [onComplete]);
 
+  // Escape key quick-skip listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onComplete();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onComplete]);
+
   const renderTextWithHighlights = (text: string) => {
     const parts = text.split(/(\[[^\]]+\])/g);
     return parts.map((part, i) => {
@@ -136,6 +147,17 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
         <div className="absolute left-2/4 top-0 bottom-0 w-[1px] bg-white" />
         <div className="absolute left-3/4 top-0 bottom-0 w-[1px] bg-white" />
       </div>
+
+      {/* Subtle accessibility Skip button */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.3 }}
+        whileHover={{ opacity: 0.85 }}
+        onClick={onComplete}
+        className="absolute bottom-8 right-8 font-mono text-[9px] uppercase tracking-[0.2em] text-white/55 hover:text-primary transition-all p-2 px-3 bg-white/[0.02] border border-white/5 rounded-lg pointer-events-auto cursor-pointer"
+      >
+        Skip Intro // ESC
+      </motion.button>
     </motion.div>
   );
 }

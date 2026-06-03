@@ -80,7 +80,7 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground selection:bg-primary/30 overflow-x-hidden font-sans cursor-none;
+    @apply bg-background text-foreground selection:bg-primary/30 overflow-x-hidden font-sans lg:cursor-none;
     background-color: var(--background);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

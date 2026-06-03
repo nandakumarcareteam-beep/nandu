@@ -60,9 +60,14 @@ export default function Contact() {
   return (
     <section id="connect" className="relative min-h-screen flex items-center justify-center py-24 overflow-hidden bg-[#050912] border-t border-white/5">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/5 rounded-full blur-[140px] -z-10" />
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] pointer-events-none -z-10"
+        style={{
+          background: "radial-gradient(circle, rgba(0, 245, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%)"
+        }}
+      />
 
-      <div className="container mx-auto px-6 max-w-4xl">
+      <div className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-24 max-w-5xl">
         <AnimatePresence mode="wait">
           {!showForm ? (
             /* STATE 1: WELCOME CALL TO ACTION */
